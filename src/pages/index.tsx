@@ -1,12 +1,14 @@
 import { GetStaticProps } from 'next';
 import Head from 'next/head';
 import { FaCalendar, FaUser } from 'react-icons/fa';
-import Image from 'next/image';
+import Link from 'next/link';
+import { useState } from 'react';
 import { getPrismicClient } from '../services/prismic';
 
 import commonStyles from '../styles/common.module.scss';
 
 import styles from './home.module.scss';
+import { dateFormat } from './_utils';
 
 interface Post {
   uid?: string;
@@ -27,7 +29,10 @@ interface HomeProps {
   postsPagination: PostPagination;
 }
 
-export default function Home(): JSX.Element {
+export default function Home({ postsPagination }: HomeProps): JSX.Element {
+  const { results, next_page } = postsPagination;
+  const [posts, setPosts] = useState(results);
+
   return (
     <>
       <Head>
@@ -37,63 +42,46 @@ export default function Home(): JSX.Element {
         <div className={styles.logoContainer}>
           <img src="/Logo.svg" alt="Spacetraveling Logo" />
         </div>
-        <div className={styles.postContainer}>
-          <strong>Como utilizar Hooks</strong>
-          <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime
-            mollitia, molestiae quas vel sint commodi repudiandae consequuntur
-            voluptatum laborum numquam blanditiis harum quisquam eius sed odit
-            fugiat iusto fuga praesentium optio, eaque rerum! Provident
-            similique accusantium nemo autem. Veritatis obcaecati tenetur iure
-            eius earum ut molestias architecto voluptate aliquam
-          </p>
-          <div className={styles.postInfoContainer}>
-            <FaCalendar />
-            <time>15 Mar 2021</time>
-            <FaUser />
-            <span>Allan Oliveira</span>
-          </div>
-        </div>
-        <div className={styles.postContainer}>
-          <strong>Como utilizar Hooks</strong>
-          <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime
-            mollitia, molestiae quas vel sint commodi repudiandae consequuntur
-            voluptatum laborum numquam blanditiis harum quisquam eius sed odit
-            fugiat iusto fuga praesentium optio, eaque rerum! Provident
-            similique accusantium nemo autem. Veritatis obcaecati tenetur iure
-            eius earum ut molestias architecto voluptate aliquam
-          </p>
-          <div className={styles.postInfoContainer}>
-            <FaCalendar />
-            <time>15 Mar 2021</time>
-            <FaUser />
-            <span>Allan Oliveira</span>
-          </div>
-        </div>
-        <div className={styles.postContainer}>
-          <strong>Como utilizar Hooks</strong>
-          <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime
-            mollitia, molestiae quas vel sint commodi repudiandae consequuntur
-            voluptatum laborum numquam blanditiis harum quisquam eius sed odit
-            fugiat iusto fuga praesentium optio, eaque rerum! Provident
-            similique accusantium nemo autem. Veritatis obcaecati tenetur iure
-            eius earum ut molestias architecto voluptate aliquam
-          </p>
-          <div className={styles.postInfoContainer}>
-            <FaCalendar />
-            <time>15 Mar 2021</time>
-            <FaUser />
-            <span>Allan Oliveira</span>
-          </div>
-        </div>
-        <p className={styles.loadMorePosts}>Carregar mais arquivos</p>
+        {posts.map((post) => {
+          return (
+            <Link href={`/post/${post.uid}`}>
+              <a className={styles.postContainer}>
+                <strong>{post.data.title}</strong>
+                <p>{post.data.subtitle}</p>
+                <div className={styles.postInfoContainer}>
+                  <FaCalendar />
+                  <time>{dateFormat(post.first_publication_date)}</time>
+                  <FaUser />
+                  <span>{post.data.author}</span>
+                </div>
+              </a>
+            </Link>
+          );
+        })}
+        <button
+          type="button"
+          onClick={async () => {
+            if (next_page) {
+              const nextPosts = await fetch(next_page).then((r) => r.json());
+              setPosts(nextPosts.results);
+            }
+          }}
+          className={styles.loadMorePosts}
+        >
+          Carregar mais posts
+        </button>
       </main>
     </>
   );
 }
 
 export const getStaticProps: GetStaticProps = async () => {
-  return { props: {} };
+  const prismic = getPrismicClient({});
+  const postsPagination = await prismic.getByType('posts');
+
+  return {
+    props: {
+      postsPagination,
+    },
+  };
 };
