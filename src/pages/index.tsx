@@ -39,7 +39,7 @@ export default function Home({ postsPagination }: HomeProps): JSX.Element {
         <title>Posts</title>
       </Head>
       <main className={commonStyles.container}>
-        <div className={styles.logoContainer}>
+        <div className={commonStyles.logoContainer}>
           <img src="/Logo.svg" alt="Spacetraveling Logo" />
         </div>
         {posts.map((post) => {
@@ -48,7 +48,7 @@ export default function Home({ postsPagination }: HomeProps): JSX.Element {
               <a className={styles.postContainer}>
                 <strong>{post.data.title}</strong>
                 <p>{post.data.subtitle}</p>
-                <div className={styles.postInfoContainer}>
+                <div className={commonStyles.postInfoContainer}>
                   <FaCalendar />
                   <time>{dateFormat(post.first_publication_date)}</time>
                   <FaUser />
@@ -58,18 +58,18 @@ export default function Home({ postsPagination }: HomeProps): JSX.Element {
             </Link>
           );
         })}
-        <button
-          type="button"
-          onClick={async () => {
-            if (next_page) {
+        {next_page && (
+          <button
+            type="button"
+            onClick={async () => {
               const nextPosts = await fetch(next_page).then((r) => r.json());
               setPosts(nextPosts.results);
-            }
-          }}
-          className={styles.loadMorePosts}
-        >
-          Carregar mais posts
-        </button>
+            }}
+            className={styles.loadMorePosts}
+          >
+            Carregar mais posts
+          </button>
+        )}
       </main>
     </>
   );

@@ -1,1 +1,8 @@
-// TODO
+.postHeader {
+  display: flex;
+  background-color: var(--gray-900);
+  height: 5rem;
+  align-items: center;
+  max-width: 100vh;
+  margin-left: calc(25vh - 720px);
+}

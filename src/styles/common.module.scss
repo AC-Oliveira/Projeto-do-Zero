@@ -2,6 +2,24 @@
   display: flex;
   align-items: center;
   flex-direction: column;
-  max-width: 1120px;
+  max-width: 100%;
   margin-top: 5rem;
+}
+
+.logoContainer {
+  display: flex;
+  flex-direction: row-reverse;
+  max-width: 720px;
+  width: 100%;
+}
+
+.postInfoContainer {
+  display: flex;
+  flex-flow: row nowrap;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  color: var(--gray-300);
+  :not(:last-child) {
+    margin-right: 1rem;
+  }
 }

@@ -17,11 +17,23 @@ type TCalcPostInfo = (dateTime: string) => {
 
 const calcPostInfo: TCalcPostInfo = (dateTimeString) => {
   const formatedDate = dateFormat(dateTimeString);
-  const minutesAfterPost = differenceInMinutes(
-    new Date(),
-    new Date(dateTimeString)
-  );
+  const minutesAfterPost = differenceInMinutes(new Date(), new Date(dateTimeString));
   return { formatedDate, minutesAfterPost: `${minutesAfterPost} min` };
 };
 
-export { dateFormat, calcPostInfo };
+interface post {
+  body: { text: string }[];
+}
+type TCalcPostReadTime = (postParagraphList: post[]) => number;
+const calcPostReadTime: TCalcPostReadTime = (postParagraphList) => {
+  const wordCount = postParagraphList.reduce(
+    (p, c) => p + c.body.reduce((pr, cu) => pr + cu.text.match(/(\w+)/g).length, 0),
+    0
+  );
+
+  const postReadTimeInMinutes = Math.ceil(wordCount / 200);
+
+  return postReadTimeInMinutes;
+};
+
+export { dateFormat, calcPostInfo, calcPostReadTime };

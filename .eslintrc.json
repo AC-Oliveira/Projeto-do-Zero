@@ -89,5 +89,9 @@
     "import/resolver": {
       "typescript": {}
     }
-  }
+  },
+  "overrides": [{
+    "files": ["*.spec.tsx"],
+    "rules": { "jest/valid-expect": 0}
+  }]
 }
