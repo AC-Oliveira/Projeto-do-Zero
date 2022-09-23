@@ -53,7 +53,13 @@ export default function Post({ post }: IPostProps): JSX.Element {
         </header> */}
         <img src={post.data?.banner?.url || post.data?.image?.url} alt="Post Banner" className={styles.postBanner} />
         <main>
-          <article>
+          <article
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+            }}
+          >
             <div className={styles.title}>
               <strong>{post.data.title}</strong>
               <p className={commonStyles.postInfoContainer}>
