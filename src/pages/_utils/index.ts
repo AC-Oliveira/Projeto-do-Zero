@@ -26,10 +26,17 @@ interface post {
 }
 type TCalcPostReadTime = (postParagraphList: post[]) => number;
 const calcPostReadTime: TCalcPostReadTime = (postParagraphList) => {
-  const wordCount = postParagraphList.reduce(
-    (p, c) => p + c.body.reduce((pr, cu) => pr + cu.text.match(/(\w+)/g).length, 0),
-    0
-  );
+  // console.log(JSON.stringify(postParagraphList, null, 1));
+  let wordCount;
+  try {
+    wordCount = postParagraphList.reduce(
+      (p, c) => p + (c?.body.reduce((pr, cu) => pr + cu?.text?.match(/(\w+)/g)?.length || 0, 0) || 0),
+      0
+    );
+  } catch (error) {
+    console.log(error);
+    return 4000;
+  }
 
   const postReadTimeInMinutes = Math.ceil(wordCount / 200);
 
